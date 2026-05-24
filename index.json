@@ -1,22 +1,4 @@
 {
-  "test-skill": {
-    "path": "skills/test-skill",
-    "latest": "1.0.0",
-    "description": "一个用于测试 SKS 系统的示例 Skill",
-    "author": "test-user",
-    "tags": [
-      "test",
-      "demo",
-      "example"
-    ]
-  },
-  "test": {
-    "path": "skills/test",
-    "latest": "1.0.0",
-    "description": "123123",
-    "author": "lxchinesszz",
-    "tags": []
-  },
   "blueprint": {
     "path": "skills/blueprint",
     "latest": "1.0.0",

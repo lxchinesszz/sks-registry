@@ -1,0 +1,9 @@
+name: blueprint
+version: 1.0.0
+description: 'Generate Engineering Blueprint-style technical architecture diagrams and flowcharts as self-contained HTML files with inline SVG. Use when the user asks to draw system architecture diagrams, data flows, deployment pipelines, CI/CD flows, microservice topologies, or any technical system flow that benefits from a dark-mode, grid-paper, Excalidraw-inspired visual style. Triggers on phrases like "画架构图", "画流程图", "系统图", "blueprint", "architecture diagram", "flowchart", "数据流图", or any request to visualize a technical system/structure.'
+author: lxchinesszz
+tags: []
+targets:
+  - claude
+  - codex
+  - cursor

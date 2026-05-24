@@ -27,26 +27,44 @@ const OUT_DIR = process.argv[2] || path.join(ROOT, 'out');
 // ─── Skill discover ──────────────────────────────────
 function discoverSkills() {
   const skills = [];
-  // 核心改动：让它去扫描 ROOT/skills 目录，而不是根目录
+  
+  // 核心改动：把扫描的起点定位到根目录下的 skills 文件夹
   const SKILLS_DIR = path.join(ROOT, 'skills');
-  if (!fs.existsSync(SKILLS_DIR)) return skills;
+
+  // 如果连 skills 文件夹都不存在，直接返回空
+  if (!fs.existsSync(SKILLS_DIR)) {
+    console.warn(`Warning: 找不到 skills 目录: ${SKILLS_DIR}`);
+    return skills;
+  }
+
+  // 扫描 skills 目录下的所有子项 (例如 blueprint, npm-publish)
   const entries = fs.readdirSync(SKILLS_DIR, { withFileTypes: true });
 
   for (const entry of entries) {
+    // 必须是文件夹才处理
     if (!entry.isDirectory()) continue;
-    if (entry.name.startsWith('.') || entry.name === 'node_modules' ||
-        entry.name === 'dist' || entry.name === 'src' || entry.name === 'scripts' ||
-        entry.name === 'out') continue;
+    // 过滤掉隐藏文件夹
+    if (entry.name.startsWith('.')) continue;
 
-    const dir = path.join(ROOT, entry.name);
+    // 当前具体的 Skill 目录路径 (如: /.../skills/blueprint)
+    const dir = path.join(SKILLS_DIR, entry.name);
     const skillMd = path.join(dir, 'SKILL.md');
     const sksYaml = path.join(dir, 'sks.yaml');
-    const promptMd = path.join(dir, 'prompt.md');
 
-    // Must have at least SKILL.md or sks.yaml
-    if (!fs.existsSync(skillMd) && !fs.existsSync(sksYaml)) continue;
+    // 检查这个子目录下是否存在 SKILL.md 或 sks.yaml
+    if (!fs.existsSync(skillMd) && !fs.existsSync(sksYaml)) {
+      console.log(`   ⚠️ 跳过 ${entry.name}: 目录下既没有 SKILL.md 也没有 sks.yaml`);
+      continue;
+    }
 
-    let meta = { name: entry.name, version: '1.0.0', author: 'community', description: '', tags: [], targets: ['claude', 'codex', 'cursor'] };
+    let meta = { 
+      name: entry.name, 
+      version: '1.0.0', 
+      author: 'community', 
+      description: '', 
+      tags: [], 
+      targets: ['claude', 'codex', 'cursor'] 
+    };
 
     // Parse sks.yaml
     if (fs.existsSync(sksYaml)) {

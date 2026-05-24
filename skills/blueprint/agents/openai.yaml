@@ -1,0 +1,5 @@
+interface:
+  display_name: "Blueprint 工程架构图"
+  short_description: "生成暗色方格纸风格的工程架构图、流程图、数据流图"
+  brand_color: "#22d3ee"
+  default_prompt: "使用 $blueprint 帮我画一张系统架构图"

@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>微服务部署流程图</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: #020617;
+      min-height: 100vh;
+      padding: 2rem;
+      color: white;
+    }
+    .container { max-width: 1150px; margin: 0 auto; }
+
+    .header { margin-bottom: 2rem; }
+    .header-row { display:flex; align-items:center; gap:1rem; margin-bottom:0.5rem; }
+    .pulse-dot {
+      width:12px; height:12px; background:#22d3ee;
+      border-radius:50%; animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.5;} }
+    h1 { font-size:1.5rem; font-weight:700; letter-spacing:-0.025em; }
+    .subtitle { color:#94a3b8; font-size:0.875rem; margin-left:1.75rem; }
+
+    .diagram-container {
+      background: rgba(15,23,42,0.5);
+      border-radius: 1rem;
+      border: 1px solid #1e293b;
+      padding: 1.5rem;
+      overflow-x: auto;
+    }
+    svg { width:100%; min-width:1120px; display:block; }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+    .card {
+      background: rgba(15,23,42,0.5);
+      border-radius: 0.75rem;
+      border: 1px solid #1e293b;
+      padding: 1.25rem;
+    }
+    .card-header { display:flex; align-items:center; gap:0.5rem; margin-bottom:0.75rem; }
+    .card-dot { width:8px; height:8px; border-radius:50%; }
+    .card h3 { font-size:0.875rem; font-weight:600; }
+    .card ul { list-style:none; color:#94a3b8; font-size:0.75rem; }
+    .card li { margin-bottom:0.375rem; }
+
+    .footer { text-align:center; margin-top:1.5rem; color:#475569; font-size:0.75rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <div class="header">
+      <div class="header-row">
+        <div class="pulse-dot"></div>
+        <h1>微服务部署流水线</h1>
+      </div>
+      <p class="subtitle">Code Commit → CI Build → Registry → Deploy → Monitor 全链路</p>
+    </div>
+
+    <div class="diagram-container">
+      <svg viewBox="0 0 1120 550">
+
+        <defs>
+          <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1e293b" stroke-width="0.5"/>
+          </pattern>
+
+          <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
+          </marker>
+          <marker id="arrow-cyan" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#22d3ee"/>
+          </marker>
+          <marker id="arrow-emerald" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#34d399"/>
+          </marker>
+          <marker id="arrow-violet" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#a78bfa"/>
+          </marker>
+          <marker id="arrow-amber" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#fbbf24"/>
+          </marker>
+          <marker id="arrow-rose" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+            <polygon points="0 0, 10 3.5, 0 7" fill="#fb7185"/>
+          </marker>
+        </defs>
+
+        <rect width="100%" height="100%" fill="url(#grid)"/>
+
+        <!-- ═══ Region: Cyan — 开发 / 代码提交 ═══ -->
+        <rect x="12" y="70" width="255" height="300" rx="10"
+          fill="rgba(8,51,68,0.06)"
+          stroke="#22d3ee" stroke-width="0.8" stroke-dasharray="8,4"/>
+        <text x="22" y="88" fill="#22d3ee" font-size="9" font-weight="600">📝 代码提交</text>
+
+        <!-- Developer (aux) -->
+        <rect x="40" y="110" width="110" height="45" rx="6"
+          fill="rgba(30,41,59,0.5)" stroke="#94a3b8" stroke-width="1.5"/>
+        <text x="95" y="137" fill="white" font-size="10" font-weight="600" text-anchor="middle">Developer</text>
+
+        <!-- Code Repo -->
+        <rect x="40" y="195" width="200" height="80" rx="6"
+          fill="#0f172a" stroke="#22d3ee" stroke-width="1.5"/>
+        <rect x="40" y="195" width="200" height="80" rx="6"
+          fill="rgba(8,51,68,0.4)" stroke="none"/>
+        <text x="140" y="223" fill="white"   font-size="12" font-weight="600" text-anchor="middle">Code Repository</text>
+        <text x="140" y="241" fill="#94a3b8" font-size="9"  text-anchor="middle">GitHub / GitLab</text>
+        <text x="140" y="257" fill="#94a3b8" font-size="8"  text-anchor="middle">Webhook Trigger</text>
+        <text x="140" y="271" fill="#22d3ee" font-size="7"  text-anchor="middle">→ Push &amp; PR Events</text>
+
+        <!-- ═══ Region: Emerald — CI 构建 ═══ -->
+        <rect x="283" y="70" width="275" height="300" rx="10"
+          fill="rgba(6,78,59,0.05)"
+          stroke="#34d399" stroke-width="0.8" stroke-dasharray="8,4"/>
+        <text x="293" y="88" fill="#34d399" font-size="9" font-weight="600">🐙 CI 构建</text>
+
+        <!-- CI Pipeline -->
+        <rect x="310" y="110" width="220" height="80" rx="6"
+          fill="#0f172a" stroke="#34d399" stroke-width="1.5"/>
+        <rect x="310" y="110" width="220" height="80" rx="6"
+          fill="rgba(6,78,59,0.4)" stroke="none"/>
+        <text x="420" y="138" fill="white"   font-size="12" font-weight="600" text-anchor="middle">CI Pipeline</text>
+        <text x="420" y="156" fill="#94a3b8" font-size="9"  text-anchor="middle">Lint → Test → Scan</text>
+        <text x="420" y="172" fill="#94a3b8" font-size="8"  text-anchor="middle">GitHub Actions / Jenkins</text>
+        <text x="420" y="186" fill="#34d399" font-size="7"  text-anchor="middle">→ Build &amp; Verify</text>
+
+        <!-- Docker Build -->
+        <rect x="310" y="230" width="220" height="80" rx="6"
+          fill="#0f172a" stroke="#34d399" stroke-width="1.5"/>
+        <rect x="310" y="230" width="220" height="80" rx="6"
+          fill="rgba(6,78,59,0.4)" stroke="none"/>
+        <text x="420" y="258" fill="white"   font-size="12" font-weight="600" text-anchor="middle">Docker Build</text>
+        <text x="420" y="276" fill="#94a3b8" font-size="9"  text-anchor="middle">Dockerfile → Image</text>
+        <text x="420" y="292" fill="#94a3b8" font-size="8"  text-anchor="middle">Multi-stage Build</text>
+        <text x="420" y="306" fill="#34d399" font-size="7"  text-anchor="middle">→ Push to Registry</text>
+
+        <!-- ═══ Region: Violet — 镜像仓库 ═══ -->
+        <rect x="574" y="70" width="155" height="300" rx="10"
+          fill="rgba(76,29,149,0.05)"
+          stroke="#a78bfa" stroke-width="0.8" stroke-dasharray="8,4"/>
+        <text x="584" y="88" fill="#a78bfa" font-size="9" font-weight="600">💾 镜像仓库</text>
+
+        <!-- Registry -->
+        <rect x="596" y="185" width="110" height="80" rx="6"
+          fill="#0f172a" stroke="#a78bfa" stroke-width="1.5"/>
+        <rect x="596" y="185" width="110" height="80" rx="6"
+          fill="rgba(76,29,149,0.4)" stroke="none"/>
+        <text x="651" y="213" fill="white"   font-size="11" font-weight="600" text-anchor="middle">Registry</text>
+        <text x="651" y="231" fill="#94a3b8" font-size="9"  text-anchor="middle">Harbor / ECR</text>
+        <text x="651" y="247" fill="#94a3b8" font-size="8"  text-anchor="middle">Tag &amp; Version</text>
+        <text x="651" y="261" fill="#a78bfa" font-size="7"  text-anchor="middle">→ Image Storage</text>
+
+        <!-- ═══ Region: Amber — 部署运行 ═══ -->
+        <rect x="745" y="70" width="355" height="300" rx="10"
+          fill="rgba(120,53,15,0.05)"
+          stroke="#fbbf24" stroke-width="0.8" stroke-dasharray="8,4"/>
+        <text x="755" y="88" fill="#fbbf24" font-size="9" font-weight="600">☁️ 部署运行</text>
+
+        <!-- CD Deploy -->
+        <rect x="775" y="100" width="200" height="55" rx="6"
+          fill="#0f172a" stroke="#fbbf24" stroke-width="1.5"/>
+        <rect x="775" y="100" width="200" height="55" rx="6"
+          fill="rgba(120,53,15,0.3)" stroke="none"/>
+        <text x="875" y="123" fill="white"   font-size="11" font-weight="600" text-anchor="middle">CD Deploy</text>
+        <text x="875" y="141" fill="#94a3b8" font-size="9"  text-anchor="middle">ArgoCD / Flux (GitOps)</text>
+        <text x="875" y="153" fill="#fbbf24" font-size="7"  text-anchor="middle">→ Pull &amp; Sync</text>
+
+        <!-- K8s Cluster -->
+        <rect x="775" y="185" width="200" height="55" rx="6"
+          fill="#0f172a" stroke="#fbbf24" stroke-width="1.5"/>
+        <rect x="775" y="185" width="200" height="55" rx="6"
+          fill="rgba(120,53,15,0.3)" stroke="none"/>
+        <text x="875" y="208" fill="white"   font-size="11" font-weight="600" text-anchor="middle">K8s Cluster</text>
+        <text x="875" y="226" fill="#94a3b8" font-size="9"  text-anchor="middle">Deployment → Pod</text>
+        <text x="875" y="238" fill="#fbbf24" font-size="7"  text-anchor="middle">→ Rolling Update</text>
+
+        <!-- Ingress -->
+        <rect x="775" y="270" width="200" height="55" rx="6"
+          fill="#0f172a" stroke="#fbbf24" stroke-width="1.5"/>
+        <rect x="775" y="270" width="200" height="55" rx="6"
+          fill="rgba(120,53,15,0.3)" stroke="none"/>
+        <text x="875" y="293" fill="white"   font-size="11" font-weight="600" text-anchor="middle">Ingress</text>
+        <text x="875" y="311" fill="#94a3b8" font-size="9"  text-anchor="middle">Nginx / Traefik</text>
+        <text x="875" y="323" fill="#fbbf24" font-size="7"  text-anchor="middle">→ TLS &amp; Routing</text>
+
+        <!-- ═══ Region: Rose — 监控告警 ═══ -->
+        <rect x="12" y="392" width="1085" height="92" rx="10"
+          fill="rgba(136,19,55,0.04)"
+          stroke="#fb7185" stroke-width="0.8" stroke-dasharray="8,4"/>
+        <text x="24" y="410" fill="#fb7185" font-size="9" font-weight="600">🚨 监控告警</text>
+
+        <!-- Health Check -->
+        <rect x="40" y="420" width="180" height="50" rx="6"
+          fill="#0f172a" stroke="#fb7185" stroke-width="1.5"/>
+        <rect x="40" y="420" width="180" height="50" rx="6"
+          fill="rgba(136,19,55,0.3)" stroke="none"/>
+        <text x="130" y="440" fill="white"   font-size="11" font-weight="600" text-anchor="middle">Health Check</text>
+        <text x="130" y="458" fill="#94a3b8" font-size="9"  text-anchor="middle">Liveness / Readiness</text>
+        <text x="130" y="468" fill="#fb7185" font-size="7"  text-anchor="middle">→ Probe</text>
+
+        <!-- Alert -->
+        <rect x="270" y="420" width="180" height="50" rx="6"
+          fill="#0f172a" stroke="#fb7185" stroke-width="1.5"/>
+        <rect x="270" y="420" width="180" height="50" rx="6"
+          fill="rgba(136,19,55,0.3)" stroke="none"/>
+        <text x="360" y="440" fill="white"   font-size="11" font-weight="600" text-anchor="middle">Alert &amp; Log</text>
+        <text x="360" y="458" fill="#94a3b8" font-size="9"  text-anchor="middle">Prometheus + Grafana</text>
+        <text x="360" y="468" fill="#fb7185" font-size="7"  text-anchor="middle">→ Notify</text>
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- ARROWS                                    -->
+        <!-- ═══════════════════════════════════════════ -->
+
+        <!-- 1. Developer → Code Repo (gray) -->
+        <line x1="95" y1="155" x2="95" y2="193"
+          stroke="#64748b" stroke-width="1.2"
+          marker-end="url(#arrow)"/>
+
+        <!-- 2. Code Repo → CI Pipeline (emerald, target is CI) -->
+        <path d="M 240 235 L 265 235 L 265 150 L 308 150"
+          fill="none"
+          stroke="#34d399" stroke-width="1.5"
+          marker-end="url(#arrow-emerald)"/>
+
+        <!-- 3. CI Pipeline → Docker Build (emerald internal) -->
+        <line x1="420" y1="190" x2="420" y2="228"
+          stroke="#34d399" stroke-width="1.5"
+          marker-end="url(#arrow-emerald)"/>
+
+        <!-- 4. Docker Build → Registry (violet target) -->
+        <path d="M 530 270 L 558 270 L 558 225 L 594 225"
+          fill="none"
+          stroke="#a78bfa" stroke-width="1.5"
+          marker-end="url(#arrow-violet)"/>
+
+        <!-- 5. Registry → CD Deploy (amber target) -->
+        <path d="M 706 225 L 735 225 L 735 127 L 773 127"
+          fill="none"
+          stroke="#fbbf24" stroke-width="1.5"
+          marker-end="url(#arrow-amber)"/>
+
+        <!-- 6. CD Deploy → K8s Cluster (amber internal) -->
+        <line x1="875" y1="155" x2="875" y2="183"
+          stroke="#fbbf24" stroke-width="1.5"
+          marker-end="url(#arrow-amber)"/>
+
+        <!-- 7. K8s Cluster → Ingress (amber internal) -->
+        <line x1="875" y1="240" x2="875" y2="268"
+          stroke="#fbbf24" stroke-width="1.5"
+          marker-end="url(#arrow-amber)"/>
+
+        <!-- 8. K8s Cluster → Health Check (rose dashed) -->
+        <path d="M 875 240 L 875 378 L 130 378 L 130 418"
+          fill="none"
+          stroke="#fb7185" stroke-width="1.2" stroke-dasharray="5,3"
+          marker-end="url(#arrow-rose)"/>
+
+        <!-- 9. Health Check → Alert & Log (rose dashed) -->
+        <line x1="220" y1="445" x2="268" y2="445"
+          stroke="#fb7185" stroke-width="1.2" stroke-dasharray="5,3"
+          marker-end="url(#arrow-rose)"/>
+
+        <!-- 10. Alert → Developer (rose dashed feedback) -->
+        <path d="M 270 445 L 95 445 L 95 157"
+          fill="none"
+          stroke="#fb7185" stroke-width="1" stroke-dasharray="4,3"
+          marker-end="url(#arrow-rose)"/>
+
+        <!-- ═══════════════════════════════════════════ -->
+        <!-- LEGEND                                    -->
+        <!-- ═══════════════════════════════════════════ -->
+        <text x="30" y="512" fill="white" font-size="10" font-weight="600">图例</text>
+
+        <rect x="30"  y="520" width="16" height="10" rx="2" fill="rgba(8,51,68,0.4)"   stroke="#22d3ee" stroke-width="1"/>
+        <text x="52"  y="528" fill="#94a3b8" font-size="8">代码提交</text>
+
+        <rect x="130" y="520" width="16" height="10" rx="2" fill="rgba(6,78,59,0.4)"   stroke="#34d399" stroke-width="1"/>
+        <text x="152" y="528" fill="#94a3b8" font-size="8">CI 构建</text>
+
+        <rect x="225" y="520" width="16" height="10" rx="2" fill="rgba(76,29,149,0.4)" stroke="#a78bfa" stroke-width="1"/>
+        <text x="247" y="528" fill="#94a3b8" font-size="8">镜像仓库</text>
+
+        <rect x="320" y="520" width="16" height="10" rx="2" fill="rgba(120,53,15,0.3)" stroke="#fbbf24" stroke-width="1"/>
+        <text x="342" y="528" fill="#94a3b8" font-size="8">部署运行</text>
+
+        <rect x="415" y="520" width="16" height="10" rx="2" fill="rgba(136,19,55,0.3)" stroke="#fb7185" stroke-width="1"/>
+        <text x="437" y="528" fill="#94a3b8" font-size="8">监控告警</text>
+
+        <line x1="525" y1="525" x2="545" y2="525" stroke="#94a3b8" stroke-width="1.2" marker-end="url(#arrow)"/>
+        <text x="552" y="528" fill="#94a3b8" font-size="8">数据流</text>
+
+        <line x1="605" y1="525" x2="625" y2="525" stroke="#fb7185" stroke-width="1" stroke-dasharray="4,3"/>
+        <text x="632" y="528" fill="#94a3b8" font-size="8">触发 / 反馈</text>
+
+      </svg>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-dot" style="background:#22d3ee;"></div>
+          <h3>① 代码提交</h3>
+        </div>
+        <ul>
+          <li>• Git push 触发 Webhook</li>
+          <li>• PR/MR 合并到主分支</li>
+          <li>• 触发下游 CI Pipeline</li>
+          <li>• 事件驱动，自动执行</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-dot" style="background:#34d399;"></div>
+          <h3>② CI 构建</h3>
+        </div>
+        <ul>
+          <li>• 代码检查、单元测试、安全扫描</li>
+          <li>• 构建 Docker 镜像并打标签</li>
+          <li>• 多阶段构建减小镜像体积</li>
+          <li>• 推送至容器镜像仓库</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-dot" style="background:#a78bfa;"></div>
+          <h3>③ 镜像存储</h3>
+        </div>
+        <ul>
+          <li>• 存储版本化容器镜像</li>
+          <li>• 支持多架构 (amd64/arm64)</li>
+          <li>• 镜像扫描与签名验证</li>
+          <li>• CD 工具监听新镜像推送</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-dot" style="background:#fbbf24;"></div>
+          <h3>④ 部署发布</h3>
+        </div>
+        <ul>
+          <li>• GitOps 自动同步集群状态</li>
+          <li>• 滚动更新，零停机部署</li>
+          <li>• Ingress 路由外部流量到服务</li>
+          <li>• TLS 终止与服务发现</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-dot" style="background:#fb7185;"></div>
+          <h3>⑤ 监控告警</h3>
+        </div>
+        <ul>
+          <li>• 健康检查探针 (Liveness/Readiness)</li>
+          <li>• 指标采集与日志聚合</li>
+          <li>• Prometheus + Grafana 可视化</li>
+          <li>• 异常告警通知开发者</li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="footer">Microservice CI/CD Pipeline · Engineering Blueprint</p>
+  </div>
+</body>
+</html>

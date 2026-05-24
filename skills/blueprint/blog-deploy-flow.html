@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog Deploy Flow — GitHub Issue → 又拍云</title>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: 'JetBrains Mono', monospace;
+      background: #020617;
+      min-height: 100vh;
+      padding: 2rem;
+      color: white;
+    }
+    .container { max-width: 1160px; margin: 0 auto; }
+
+    .header { margin-bottom: 2rem; }
+    .header-row { display:flex; align-items:center; gap:1rem; margin-bottom:0.5rem; }
+    .pulse-dot {
+      width:12px; height:12px; background:#22d3ee;
+      border-radius:50%; animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.5;} }
+    h1 { font-size:1.5rem; font-weight:700; letter-spacing:-0.025em; }
+    .subtitle { color:#94a3b8; font-size:0.875rem; margin-left:1.75rem; }
+
+    .diagram-container {
+      background: rgba(15,23,42,0.5);
+      border-radius: 1rem;
+      border: 1px solid #1e293b;
+      padding: 1.5rem;
+      overflow-x: auto;
+    }
+    svg { width:100%; min-width:1100px; display:block; }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+    .card {
+      background: rgba(15,23,42,0.5);
+      border-radius: 0.75rem;
+      border: 1px solid #1e293b;
+      padding: 1.25rem;
+    }
+    .card-header { display:flex; align-items:center; gap:0.5rem; margin-bottom:0.75rem; }
+    .card-dot { width:8px; height:8px; border-radius:50%; }
+    .card h3 { font-size:0.875rem; font-weight:600; }
+    .card ul { list-style:none; color:#94a3b8; font-size:0.75rem; }
+    .card li { margin-bottom:0.375rem; }
+
+    .footer { text-align:center; margin-top:1.5rem; color:#475569; font-size:0.75rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="header-row">
+        <div class="pulse-dot"></div>
+        <h1>Blog Deploy Flow</h1>
+      </div>
+      <p class="subtitle">GitHub Issue → Actions → UPYUN → CDN 自动部署流水线</p>
+    </div>
+
+    <div class="diagram-container">
+      <svg viewBox="0 0 1100 440">
+        <defs>
+          <!-- Grid pattern -->
+          <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse">
+            <path d="M 24 0 L 0 0 0 24" fill="none" stroke="#1e293b" stroke-width="0.5"/>
+          </pattern>
+
+          <!-- Arrow markers -->
+          <marker id="arrow-cyan" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8 Z" fill="#22d3ee"/>
+          </marker>
+          <marker id="arrow-emerald" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8 Z" fill="#34d399"/>
+          </marker>
+          <marker id="arrow-violet" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8 Z" fill="#a78bfa"/>
+          </marker>
+          <marker id="arrow-amber" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8 Z" fill="#fbbf24"/>
+          </marker>
+          <marker id="arrow-rose" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8 Z" fill="#fb7185"/>
+          </marker>
+        </defs>
+
+        <!-- Grid background -->
+        <rect width="1100" height="440" fill="url(#grid)" opacity="0.4"/>
+
+        <!-- ===== Region 1: 本地 / Author (cyan) ===== -->
+        <rect x="18" y="22" width="216" height="200" rx="8"
+          fill="rgba(8,51,68,0.06)" stroke="#22d3ee" stroke-width="1.2" stroke-dasharray="8,4"/>
+        <text x="30" y="44" fill="#22d3ee" font-size="10" font-weight="600">本地 / Author</text>
+
+        <!-- Node 1: 撰写博客 -->
+        <rect x="42" y="60" width="166" height="48" rx="6" fill="#0f172a" stroke="none"/>
+        <rect x="42" y="60" width="166" height="48" rx="6" fill="rgba(8,51,68,0.4)" stroke="#22d3ee" stroke-width="1.2"/>
+        <text x="125" y="78" fill="white" font-size="12" font-weight="600" text-anchor="middle">撰写博客</text>
+        <text x="125" y="94" fill="#94a3b8" font-size="9" text-anchor="middle">Markdown / Org-mode</text>
+        <text x="125" y="104" fill="#22d3ee" font-size="8" text-anchor="middle">本地编辑</text>
+
+        <!-- Node 2: 提交 Issue -->
+        <rect x="42" y="148" width="166" height="48" rx="6" fill="#0f172a" stroke="none"/>
+        <rect x="42" y="148" width="166" height="48" rx="6" fill="rgba(8,51,68,0.4)" stroke="#22d3ee" stroke-width="1.2"/>
+        <text x="125" y="166" fill="white" font-size="12" font-weight="600" text-anchor="middle">提交 Issue</text>
+        <text x="125" y="182" fill="#94a3b8" font-size="9" text-anchor="middle">GitHub Issue API</text>
+        <text x="125" y="192" fill="#22d3ee" font-size="8" text-anchor="middle">触发部署</text>
+
+        <!-- Arrow N1 → N2 -->
+        <line x1="125" y1="108" x2="125" y2="143" stroke="#22d3ee" stroke-width="1.8" marker-end="url(#arrow-cyan)"/>
+
+        <!-- ===== Region 2: GitHub (emerald) ===== -->
+        <rect x="254" y="22" width="296" height="270" rx="8"
+          fill="rgba(6,78,59,0.05)" stroke="#34d399" stroke-width="1.2" stroke-dasharray="8,4"/>
+        <text x="266" y="44" fill="#34d399" font-size="10" font-weight="600">GitHub</text>
+
+        <!-- Node 3: Issue Webhook -->
+        <rect x="280" y="60" width="166" height="48" rx="6" fill="#0f172a" stroke="none"/>
+        <rect x="280" y="60" width="166" height="48" rx="6" fill="rgba(6,78,59,0.4)" stroke="#34d399" stroke-width="1.2"/>
+        <text x="363" y="78" fill="white" font-size="12" font-weight="600" text-anchor="middle">Issue Webhook</text>
+        <text x="363" y="94" fill="#94a3b8" font-size="9" text-anchor="middle">事件监听</text>
+        <text x="363" y="104" fill="#34d399" font-size="8" text-anchor="middle">webhook event</text>
+
+        <!-- Node 4: GitHub Actions -->
+        <rect x="280" y="148" width="166" height="48" rx="6" fill="#0f172a" stroke="none"/>
+        <rect x="280" y="148" width="166" height="48" rx="6" fill="rgba(6,78,59,0.4)" stroke="#34d399" stroke-width="1.2"/>
+        <text x="363" y="166" fill="white" font-size="12" font-weight="600" text-anchor="middle">GitHub Actions</text>
+        <text x="363" y="182" fill="#94a3b8" font-size="9" text-anchor="middle">workflow dispatch</text>
+        <text x="363" y="192" fill="#34d399" font-size="8" text-anchor="middle">CI 流水线</text>
+
+        <!-- Node 5: 构建 & 部署 -->
+        <rect x="280" y="236" width="166" height="48" rx="6" fill="#0f172a" stroke="none"/>
+        <rect x="280" y="236" width="166" height="48" rx="6" fill="rgba(6,78,59,0.4)" stroke="#34d399" stroke-width="1.2"/>
+        <text x="363" y="254" fill="white" font-size="12" font-weight="600" text-anchor="middle">构建 & 部署</text>
+        <text x="363" y="270" fill="#94a3b8" font-size="9" text-anchor="middle">upx deploy script</text>
+        <text x="363" y="280" fill="#34d399" font-size="8" text-anchor="middle">UPYUN 上传</text>
+
+        <!-- Arrow N3 → N4 -->
+        <line x1="363" y1="108" x2="363" y2="143" stroke="#34d399" stroke-width="1.8" marker-end="url(#arrow-emerald)"/>
+        <!-- Arrow N4 → N5 -->
+        <line x1="363" y1="196" x2="363" y2="231" stroke="#34d399" stroke-width="1.8" marker-end="url(#arrow-emerald)"/>
+
+        <!-- Dashed arrow N2 → N3 (async trigger) -->
+        <path d="M 208 172 L 208 84 L 275 84"
+          fill="none" stroke="#fb7185" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#arrow-rose)"/>
+
+        <!-- ===== Region 3: 又拍云 UPYUN (violet) ===== -->
+        <rect x="570" y="22" width="216" height="130" rx="8"
+          fill="rgba(76,29,149,0.05)" stroke="#a78bfa" stroke-width="1.2" stroke-dasharray="8,4"/>
+        <text x="582" y="44" fill="#a78bfa" font-size="10" font-weight="600">又拍云 UPYUN</text>
+
+        <!-- Node 6: 上传又拍云 -->
+        <rect x="594" y="74" width="166" height="48" rx="6" fill="#0f172a" stroke="none"/>
+        <rect x="594" y="74" width="166" height="48" rx="6" fill="rgba(76,29,149,0.4)" stroke="#a78bfa" stroke-width="1.2"/>
+        <text x="677" y="92" fill="white" font-size="12" font-weight="600" text-anchor="middle">又拍云存储</text>
+        <text x="677" y="108" fill="#94a3b8" font-size="9" text-anchor="middle">静态资源托管</text>
+        <text x="677" y="118" fill="#a78bfa" font-size="8" text-anchor="middle">对象存储</text>
+
+        <!-- Bent arrow N5 → N6 -->
+        <path d="M 446 260 L 446 98 L 589 98"
+          fill="none" stroke="#a78bfa" stroke-width="1.8" marker-end="url(#arrow-violet)"/>
+
+        <!-- ===== Region 4: CDN / 访问层 (amber) ===== -->
+        <rect x="806" y="22" width="268" height="200" rx="8"
+          fill="rgba(120,53,15,0.05)" stroke="#fbbf24" stroke-width="1.2" stroke-dasharray="8,4"/>
+        <text x="818" y="44" fill="#fbbf24" font-size="10" font-weight="600">CDN / 访问层</text>
+
+        <!-- Node 7: 域名绑定 -->
+        <rect x="830" y="60" width="166" height="48" rx="6" fill="#0f172a" stroke="none"/>
+        <rect x="830" y="60" width="166" height="48" rx="6" fill="rgba(120,53,15,0.3)" stroke="#fbbf24" stroke-width="1.2"/>
+        <text x="913" y="78" fill="white" font-size="12" font-weight="600" text-anchor="middle">域名绑定</text>
+        <text x="913" y="94" fill="#94a3b8" font-size="9" text-anchor="middle">CNAME 解析</text>
+        <text x="913" y="104" fill="#fbbf24" font-size="8" text-anchor="middle">CDN 加速</text>
+
+        <!-- Node 8: 用户访问 -->
+        <rect x="830" y="148" width="166" height="48" rx="6" fill="#0f172a" stroke="none"/>
+        <rect x="830" y="148" width="166" height="48" rx="6" fill="rgba(120,53,15,0.3)" stroke="#fbbf24" stroke-width="1.2"/>
+        <text x="913" y="166" fill="white" font-size="12" font-weight="600" text-anchor="middle">用户访问</text>
+        <text x="913" y="182" fill="#94a3b8" font-size="9" text-anchor="middle">HTTPS / HTTP/2</text>
+        <text x="913" y="192" fill="#fbbf24" font-size="8" text-anchor="middle">终端访问</text>
+
+        <!-- Arrow N6 → N7 -->
+        <line x1="760" y1="98" x2="825" y2="84" stroke="#fbbf24" stroke-width="1.8" marker-end="url(#arrow-amber)"/>
+
+        <!-- Arrow N7 → N8 -->
+        <line x1="913" y1="108" x2="913" y2="143" stroke="#fbbf24" stroke-width="1.8" marker-end="url(#arrow-amber)"/>
+
+        <!-- Legend -->
+        <text x="30" y="385" fill="white" font-size="10" font-weight="600">Legend</text>
+
+        <rect x="30"  y="395" width="16" height="10" rx="2" fill="rgba(8,51,68,0.4)"   stroke="#22d3ee" stroke-width="1"/>
+        <text x="52"  y="403" fill="#94a3b8" font-size="8">本地</text>
+
+        <rect x="110" y="395" width="16" height="10" rx="2" fill="rgba(6,78,59,0.4)"   stroke="#34d399" stroke-width="1"/>
+        <text x="132" y="403" fill="#94a3b8" font-size="8">GitHub</text>
+
+        <rect x="210" y="395" width="16" height="10" rx="2" fill="rgba(76,29,149,0.4)" stroke="#a78bfa" stroke-width="1"/>
+        <text x="232" y="403" fill="#94a3b8" font-size="8">又拍云</text>
+
+        <rect x="300" y="395" width="16" height="10" rx="2" fill="rgba(120,53,15,0.3)" stroke="#fbbf24" stroke-width="1"/>
+        <text x="322" y="403" fill="#94a3b8" font-size="8">CDN / 访问</text>
+
+        <line x1="410" y1="400" x2="430" y2="400" stroke="#94a3b8" stroke-width="1.4" marker-end="url(#arrow-cyan)"/>
+        <text x="437" y="403" fill="#94a3b8" font-size="8">数据流</text>
+
+        <line x1="510" y1="400" x2="530" y2="400" stroke="#fb7185" stroke-width="1" stroke-dasharray="4,3"/>
+        <text x="537" y="403" fill="#94a3b8" font-size="8">异步触发</text>
+
+        <!-- Annotations -->
+        <text x="30" y="425" fill="#475569" font-size="8">Hugo / Hexo / Jekyll → GitHub Issues API → Webhook → Actions Runner → upx CLI → UPYUN CDN</text>
+      </svg>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-dot" style="background:#22d3ee;"></div>
+          <h3>① 内容创作 & 提交</h3>
+        </div>
+        <ul>
+          <li>• 使用 Markdown / Org-mode 撰写博客</li>
+          <li>• 通过 GitHub Issue API 提交为新 Issue</li>
+          <li>• Issue 标题作为文章标题，正文即内容</li>
+          <li>• Label 控制分类、发布状态等元信息</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-dot" style="background:#34d399;"></div>
+          <h3>② GitHub Actions 自动化</h3>
+        </div>
+        <ul>
+          <li>• Issue Webhook 监听新建 / 更新事件</li>
+          <li>• Workflow dispatch 触发构建流水线</li>
+          <li>• 静态站点生成 (Hugo/Hexo/Jekyll)</li>
+          <li>• 执行 upx 上传脚本推送至又拍云</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-dot" style="background:#a78bfa;"></div>
+          <h3>③ 又拍云存储</h3>
+        </div>
+        <ul>
+          <li>• 又拍云对象存储托管静态资源</li>
+          <li>• upx CLI 工具增量同步文件</li>
+          <li>• 自动设置 Content-Type 与缓存头</li>
+          <li>• 支持目录级文件管理与版本回滚</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-dot" style="background:#fbbf24;"></div>
+          <h3>④ CDN 加速 & 访问</h3>
+        </div>
+        <ul>
+          <li>• 自定义域名 CNAME 解析至又拍云</li>
+          <li>• HTTPS 证书自动管理与续期</li>
+          <li>• 全国 CDN 节点加速内容分发</li>
+          <li>• 终端用户通过域名直接访问博客</li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="footer">Blog Deploy Pipeline · GitHub Issue → Actions → UPYUN → CDN · 全自动部署</p>
+  </div>
+</body>
+</html>

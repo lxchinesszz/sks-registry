@@ -34,8 +34,7 @@ try {
 }
 
 const upyun = require('upyun')
-const fs = require('fs')
-const path = require('path')
+
 
 function usage() {
   console.log(

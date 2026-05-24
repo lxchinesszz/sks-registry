@@ -3,7 +3,7 @@ name: Build and Deploy SKS Website to UpYun
 on:
   push:
     branches:
-      - master  # 如果你的主分支是 master，请改为 master
+      - main  # 如果你的主分支是 master，请改为 master
 
 jobs:
   build-and-deploy:
@@ -19,20 +19,15 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: 20
-        cache: 'npm'
 
-    # 3. 安装依赖（生成脚本依赖了 'yaml' 库，必须执行 install）
-    - name: Install Dependencies
-      run: npm install
-
-    # 4. 执行页面重构（运行你的生成脚本，默认会输出到项目根目录下的 out/ 文件夹）
+    # 3. 运行重构脚本（自动下载 yaml 并生成 out/）
     - name: Generate Website
       run: node scripts/generate-site.js
 
-    # 5. 运行又拍云上传脚本，将构建好的 out 目录同步到云空间
+    # 4. 运行发布脚本（自动下载 upyun 并将 out/ 上传到云空间）
     - name: Deploy to UpYun
       env:
         YP_SPACE: ${{ secrets.YP_SPACE }}
         YP_NAME: ${{ secrets.YP_NAME }}
         YP_PWD: ${{ secrets.YP_PWD }}
-      run: node youpai-syns.js
+      run: node scripts/youpai-sync.js

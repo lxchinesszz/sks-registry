@@ -9,6 +9,29 @@ try {
   console.log('✅ yaml 安装成功，继续执行脚本。\n');
 }
 // ────────────────────────────────────────────────────────
+// ─── 1. 终极自动检查并安装又拍云 SDK ──────────────────────────────────
+const fs = require('fs');
+const path = require('path');
+
+try {
+  // 尝试加载
+  require('upyun');
+} catch (e) {
+  console.log('📦 未检测到 upyun 依赖，正在执行强力全局/本地双重安装...');
+  const { execSync } = require('child_process');
+  
+  // 核心改动：强行在项目根目录下创建一个 node_modules 并安装，确保 Node 能够通过路径查找到
+  const ROOT_PATH = path.resolve(__dirname, '..');
+  
+  try {
+    // 强制在根目录执行 npm install，不依赖 package.json
+    execSync('npm install upyun --no-save', { cwd: ROOT_PATH, stdio: 'inherit' });
+  } catch (err) {
+    console.log('⚠️ 尝试在根目录安装失败，尝试普通安装...');
+    execSync('npm install upyun --no-save', { stdio: 'inherit' });
+  }
+  console.log('✅ upyun 依赖处理完成。\n');
+}
 
 const upyun = require('upyun')
 const fs = require('fs')

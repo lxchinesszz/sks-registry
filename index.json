@@ -1,1 +1,13 @@
-{}
+{
+  "test-skill": {
+    "path": "skills/test-skill",
+    "latest": "1.0.0",
+    "description": "一个用于测试 SKS 系统的示例 Skill",
+    "author": "test-user",
+    "tags": [
+      "test",
+      "demo",
+      "example"
+    ]
+  }
+}

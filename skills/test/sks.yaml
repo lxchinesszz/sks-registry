@@ -1,0 +1,7 @@
+name: test
+version: 1.0.0
+description: "123123"
+author: lxchinesszz
+tags: []
+targets:
+  - claude

@@ -27,7 +27,7 @@ jobs:
     # 4. 运行发布脚本（自动下载 upyun 并将 out/ 上传到云空间）
     - name: Deploy to UpYun
       env:
-        YP_SPACE: ${{ secrets.YP_SPACE }}
-        YP_NAME: ${{ secrets.YP_NAME }}
+        YP_SPACE: ${{ vars.YP_SPACE }}
+        YP_NAME: ${{ vars.YP_NAME }}
         YP_PWD: ${{ secrets.YP_PWD }}
       run: node scripts/youpai-sync.js

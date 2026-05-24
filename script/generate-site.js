@@ -5,6 +5,17 @@
  * 用法: node scripts/generate-site.js [outputDir]
  * 输出: <outputDir>/index.html
  */
+// ─── 自动检查并安装依赖 ──────────────────────────────────
+try {
+  require('yaml');
+} catch (e) {
+  console.log('📦 未检测到 yaml 依赖，正在自动安装...');
+  const { execSync } = require('child_process');
+  // 在当前目录直接安装 yaml 包
+  execSync('npm install yaml --no-save', { stdio: 'inherit' });
+  console.log('✅ yaml 安装成功，继续执行脚本。\n');
+}
+// ────────────────────────────────────────────────────────
 
 const fs = require('fs');
 const path = require('path');

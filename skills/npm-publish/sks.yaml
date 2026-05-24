@@ -1,0 +1,9 @@
+name: npm-publish
+version: 1.0.0
+description: npm 发布技能
+author: lxchinesszz
+tags: []
+targets:
+  - claude
+  - codex
+  - cursor

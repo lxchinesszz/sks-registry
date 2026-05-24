@@ -27,7 +27,10 @@ const OUT_DIR = process.argv[2] || path.join(ROOT, 'out');
 // ─── Skill discover ──────────────────────────────────
 function discoverSkills() {
   const skills = [];
-  const entries = fs.readdirSync(ROOT, { withFileTypes: true });
+  // 核心改动：让它去扫描 ROOT/skills 目录，而不是根目录
+  const SKILLS_DIR = path.join(ROOT, 'skills');
+  if (!fs.existsSync(SKILLS_DIR)) return skills;
+  const entries = fs.readdirSync(SKILLS_DIR, { withFileTypes: true });
 
   for (const entry of entries) {
     if (!entry.isDirectory()) continue;

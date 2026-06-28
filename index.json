@@ -12,5 +12,12 @@
     "description": "npm 发布技能",
     "author": "lxchinesszz",
     "tags": []
+  },
+  "design-taste-frontend": {
+    "path": "skills/design-taste-frontend",
+    "latest": "1.0.0",
+    "description": "前端设计",
+    "author": "lxchinesszz",
+    "tags": []
   }
 }

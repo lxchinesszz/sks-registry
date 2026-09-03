@@ -1,0 +1,4 @@
+interface:
+  display_name: "初始化产品 Agent 团队"
+  short_description: "在当前项目中建立产品、UI、开发与测试协作环境"
+  default_prompt: "使用 $init-product-team 初始化当前项目的产品开发 Agent 团队。"
